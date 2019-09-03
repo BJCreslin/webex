@@ -24,7 +24,8 @@ public class ContactController {
         this.service = service;
     }
 
-    @GetMapping("")
+    @GetMapping(path = "",
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Contact> getAll() {
         return service.getAll();
     }
