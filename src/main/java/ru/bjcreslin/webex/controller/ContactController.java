@@ -1,12 +1,10 @@
 package ru.bjcreslin.webex.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ru.bjcreslin.webex.config.Constants;
 import ru.bjcreslin.webex.exceptions.NotFoundException;
 import ru.bjcreslin.webex.repository.domain.Contact;
@@ -24,7 +22,7 @@ public class ContactController {
         this.service = service;
     }
 
-    @GetMapping(path = "",
+        @GetMapping(path = "",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Contact> getAll() {
         return service.getAll();
@@ -34,12 +32,48 @@ public class ContactController {
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
     Contact read(@PathVariable long id) {
+        if (id==0l) {return Contact.getRandom();}
         Contact result = service.read(id);
         if (result == null) {
-            throw new NotFoundException(Constants.CONTACT_OBJECT_NAME + id);
+            throw new NotFoundException("Get " + Constants.CONTACT_OBJECT_NAME + id);
         }
+        return result;
+    }
+
+    @DeleteMapping(path = Constants.DELETE_PREFIX + "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    String delete(@PathVariable long id) {
+        if (service.delete(id)) {
+            return HttpStatus.OK.getReasonPhrase();
+        } else {
+            throw new NotFoundException("Delete " + Constants.CONTACT_OBJECT_NAME + id);
+        }
+    }
+
+
+    @PatchMapping(path = Constants.UPDATE_PREFIX,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    String update(@RequestBody Contact contact) {
+        if (service.update(contact)) {
+            return HttpStatus.OK.getReasonPhrase();
+        } else {
+            throw new NotFoundException("Update " + Constants.CONTACT_OBJECT_NAME + contact);
+        }
+    }
+
+    @PostMapping(path = Constants.CREATE_PREFIX,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public @ResponseBody
+    Contact create(@RequestBody Contact contact) {
+        Contact result = service.create(contact);
+
 
         return result;
     }
+
 
 }

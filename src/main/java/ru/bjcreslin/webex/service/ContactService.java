@@ -23,4 +23,24 @@ public class ContactService {
     public Contact read(long id) {
         return repository.getOne(id);
     }
+
+    public boolean delete(long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean update(Contact contact) {
+        if (repository.existsById(contact.getId())) {
+            repository.saveAndFlush(contact);
+            return true;
+        }
+        return false;
+    }
+
+    public Contact create(Contact contact) {
+        return repository.saveAndFlush(contact);
+    }
 }
