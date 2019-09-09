@@ -22,17 +22,31 @@ public class ContactController {
         this.service = service;
     }
 
-        @GetMapping(path = "",
+
+    @GetMapping(path = "",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<Contact> getAll() {
         return service.getAll();
     }
 
-    @GetMapping(path = "/{id}",
+    /**
+     * Простой тест АПИ сервиса. Тупо выдает текст "Test Ok"
+     * @return   текст "Test Ok"
+     */
+    @GetMapping(path = Constants.TEST_PREFIX, produces = MediaType.TEXT_HTML_VALUE)
+    public @ResponseBody
+    String simpleAPITest() {
+        return "Test Ok";
+    }
+
+
+    @GetMapping(path = Constants.GET_PREFIX + "/{id}",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
     Contact read(@PathVariable long id) {
-        if (id==0l) {return Contact.getRandom();}
+        if (id == 0l) {
+            return Contact.getRandom();
+        }
         Contact result = service.read(id);
         if (result == null) {
             throw new NotFoundException("Get " + Constants.CONTACT_OBJECT_NAME + id);
@@ -70,8 +84,6 @@ public class ContactController {
     public @ResponseBody
     Contact create(@RequestBody Contact contact) {
         Contact result = service.create(contact);
-
-
         return result;
     }
 

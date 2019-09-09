@@ -8,4 +8,5 @@ public interface Constants {
     String UPDATE_PREFIX = "";
     String CREATE_PREFIX = "";
     String TEST_PREFIX = "/test";
+    String GET_PREFIX ="/get_one" ;
 }

@@ -1,8 +1,6 @@
 package ru.bjcreslin.webex.repository.domain;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Random;
@@ -10,7 +8,7 @@ import java.util.Random;
 /**
  * Контакты специалиста по закупкам
  */
-@Builder
+//@Builder
 @Entity
 @Data
 @Table(name = "contacts")
@@ -28,21 +26,34 @@ public class Contact {
     private String phoneNumber;   // телефон
     private String comment;  //комментарий
 
+    public Contact(String firstName, String middleName, String lastName, Long innOrganisation, String position, String email, String phoneNumber, String comment) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.innOrganisation = innOrganisation;
+        this.position = position;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.comment = comment;
+    }
+
+    public Contact() {
+    }
+
     /**
      * Случайное значение Contact для тестирования и т.п.
+     *
      * @return Contact
      */
     public static Contact getRandom() {
         Random random = new Random();
-        return Contact.builder().id(random.nextLong()).
-                firstName("first" + random.nextInt()).
-                middleName("middle" + random.nextInt()).
-                lastName("last" + random.nextInt()).
-                email("no@mail.com" + random.nextInt()).
-                comment("comment" + random.nextInt()).
-                innOrganisation(random.nextLong()).
-                phoneNumber("phone" + random.nextInt()).
-                position("position" + random.nextInt()).
-                build();
+        return new Contact("first" + random.nextInt(),
+                "middle" + random.nextInt(),
+                "last" + random.nextInt(),
+                random.nextLong(),
+                "position" + random.nextInt(),
+                "no@mail.com" + random.nextInt(),
+                "phone" + random.nextInt(),
+                "comment" + random.nextInt());
     }
 }
