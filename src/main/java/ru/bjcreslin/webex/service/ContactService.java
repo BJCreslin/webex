@@ -21,7 +21,7 @@ public class ContactService {
     }
 
     public Contact read(long id) {
-        return repository.getOne(id);
+        return repository.findById(id).get();
     }
 
     public boolean delete(long id) {

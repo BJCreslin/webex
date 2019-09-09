@@ -1,5 +1,7 @@
 package ru.bjcreslin.webex.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +14,7 @@ import ru.bjcreslin.webex.service.ContactService;
 
 import java.util.List;
 
+@lombok.extern.java.Log
 @Controller
 @RequestMapping(Constants.CONTACT_CONTROLLER_PREFIX)
 public class ContactController {
@@ -23,15 +26,19 @@ public class ContactController {
     }
 
 
-    @GetMapping(path = "",
+    @GetMapping(path = Constants.GET_ALL_PREFIX,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public List<Contact> getAll() {
-        return service.getAll();
+    public @ResponseBody
+    List<Contact> getAll() {
+        List<Contact> contactList = service.getAll();
+        log.info(contactList.toString());
+        return contactList;
     }
 
     /**
      * Простой тест АПИ сервиса. Тупо выдает текст "Test Ok"
-     * @return   текст "Test Ok"
+     *
+     * @return текст "Test Ok"
      */
     @GetMapping(path = Constants.TEST_PREFIX, produces = MediaType.TEXT_HTML_VALUE)
     public @ResponseBody
@@ -43,14 +50,16 @@ public class ContactController {
     @GetMapping(path = Constants.GET_PREFIX + "/{id}",
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
-    Contact read(@PathVariable long id) {
+    Contact read(@PathVariable long id) throws JsonProcessingException {
         if (id == 0l) {
             return Contact.getRandom();
         }
         Contact result = service.read(id);
+        log.info(result.toString());
         if (result == null) {
             throw new NotFoundException("Get " + Constants.CONTACT_OBJECT_NAME + id);
         }
+        ObjectMapper objectMapper = new ObjectMapper();
         return result;
     }
 
