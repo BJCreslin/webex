@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.bjcreslin.webex.common_interfaces.APIController;
 import ru.bjcreslin.webex.config.Constants;
 import ru.bjcreslin.webex.exceptions.NotFoundException;
 import ru.bjcreslin.webex.repository.domain.Contact;
@@ -17,7 +18,7 @@ import java.util.List;
 @lombok.extern.java.Log
 @Controller
 @RequestMapping(Constants.CONTACT_CONTROLLER_PREFIX)
-public class ContactController {
+public class ContactController implements APIController {
     private ContactService service;
 
     @Autowired
@@ -26,8 +27,6 @@ public class ContactController {
     }
 
 
-    @GetMapping(path = Constants.GET_ALL_PREFIX,
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
     List<Contact> getAll() {
         List<Contact> contactList = service.getAll();
@@ -35,11 +34,7 @@ public class ContactController {
         return contactList;
     }
 
-    /**
-     * Простой тест АПИ сервиса. Тупо выдает текст "Test Ok"
-     *
-     * @return текст "Test Ok"
-     */
+
     @GetMapping(path = Constants.TEST_PREFIX, produces = MediaType.TEXT_HTML_VALUE)
     public @ResponseBody
     String simpleAPITest() {
@@ -47,11 +42,9 @@ public class ContactController {
     }
 
 
-    @GetMapping(path = Constants.GET_PREFIX + "/{id}",
-            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
-    Contact read(@PathVariable long id) throws JsonProcessingException {
-        if (id == 0l) {
+    Contact getOne(@PathVariable long id) {
+        if (id == 0L) {
             return Contact.getRandom();
         }
         Contact result = service.read(id);
@@ -59,18 +52,31 @@ public class ContactController {
         if (result == null) {
             throw new NotFoundException("Get " + Constants.CONTACT_OBJECT_NAME + id);
         }
-        ObjectMapper objectMapper = new ObjectMapper();
         return result;
     }
 
-    @DeleteMapping(path = Constants.DELETE_PREFIX + "/{id}")
-    @ResponseStatus(HttpStatus.OK)
+
     public @ResponseBody
-    String delete(@PathVariable long id) {
+    String deleteOne(@PathVariable long id) {
         if (service.delete(id)) {
             return HttpStatus.OK.getReasonPhrase();
         } else {
             throw new NotFoundException("Delete " + Constants.CONTACT_OBJECT_NAME + id);
+        }
+    }
+
+    @Override
+    public String size() {
+        long baseSize;
+        if ((baseSize = service.size()) < 0) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                return mapper.writeValueAsString(baseSize);
+            } catch (JsonProcessingException e) {
+                throw new NotFoundException("Size to JSON convertion error " + baseSize);
+            }
+        } else {
+            throw new NotFoundException("Количество меньше нуля " + baseSize);
         }
     }
 

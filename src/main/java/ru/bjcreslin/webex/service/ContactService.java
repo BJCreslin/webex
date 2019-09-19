@@ -2,10 +2,12 @@ package ru.bjcreslin.webex.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.bjcreslin.webex.exceptions.NotFoundException;
 import ru.bjcreslin.webex.repository.ContactRepository;
 import ru.bjcreslin.webex.repository.domain.Contact;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContactService {
@@ -21,7 +23,12 @@ public class ContactService {
     }
 
     public Contact read(long id) {
-        return repository.findById(id).get();
+        Optional<Contact> result = repository.findById(id);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NotFoundException("Not find Contact with id=" + id);
+        }
     }
 
     public boolean delete(long id) {
@@ -42,5 +49,9 @@ public class ContactService {
 
     public Contact create(Contact contact) {
         return repository.saveAndFlush(contact);
+    }
+
+    public long size() {
+        return repository.count();
     }
 }

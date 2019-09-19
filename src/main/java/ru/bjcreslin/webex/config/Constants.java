@@ -10,4 +10,5 @@ public interface Constants {
     String TEST_PREFIX = "/test";
     String GET_PREFIX = "/get_one";
     String GET_ALL_PREFIX = "/get_all";
+    String SIZE_PREFIX = "/size";
 }
