@@ -71,7 +71,7 @@ public interface APIController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    String update(@RequestBody Contact contact);
+    String updateOne(@RequestBody Contact contact);
 
     /**
      * Создание нового контакта
@@ -83,6 +83,6 @@ public interface APIController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    Contact create(@RequestBody Contact contact);
+    Contact createOne(@RequestBody Contact contact);
 
 }

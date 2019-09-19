@@ -85,7 +85,7 @@ public class ContactController implements APIController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    String update(@RequestBody Contact contact) {
+    String updateOne(@RequestBody Contact contact) {
         if (service.update(contact)) {
             return HttpStatus.OK.getReasonPhrase();
         } else {
@@ -97,7 +97,7 @@ public class ContactController implements APIController {
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
             produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public @ResponseBody
-    Contact create(@RequestBody Contact contact) {
+    Contact createOne(@RequestBody Contact contact) {
         Contact result = service.create(contact);
         return result;
     }
